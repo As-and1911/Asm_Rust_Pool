@@ -220,3 +220,28 @@ iretq
 
 
         le processeur se retrouve instantanément configuré exactement comme l'était le programme B avant d'être interrompu. Il reprend son exécution au RIP restauré, sans même avoir conscience qu'il a été arrêté
+
+
+
+        @@@          IL Y A T IL UNE PILE ET DES RÉGISTRES POUR CHAQUE PROCESSUS?         @@@
+
+        En réalité, chaque processus dispose de sa propre pile (virtuelle), mais ils partagent tous physiquement les mêmes régistres du processeur.
+        C'est la tout le génie de l'architecture d'un ordinateur. Voici précisément comment le processeur et le système d'exploitation s'organisent pour ne jamais rien confondre.
+
+        1- La pile (La stack): Une par processus
+
+        Chaque processus possède sa propre pile. Plus préciséement, chaque processus dispose d'un espace de mémoire RAM qui lui est totalement réservé.
+        Pour éviter qu'un processus n'écrive sur la pile d'un autre, le processeur utilise un composant matériel appelé la MMU (Memory Management Unit) et un mécanisme appelé la mémoire virtuelle:
+        -L'illusion: Quand un programme est compilé, il a l'impression d'avoir une pile à une adreese fixe (par exemple 0x7fffffffe000) Tous les programmes croient avoir la même adresse.
+        -La réalité: La MMU possède une "table de traduction" (gérée par l'OS). Lorsque le process A accède à son adresse 0x7fff... , la MMU la traduit en une case physique réelle dans la RAM (ex: Case n°1250). Lorsque le process B accède à la même adresse virtuelle;, la MMU la traduit vers une tout autre case physique (ex: Case n°8400)
+        Puisque les espaces physiques de la RAM sont totalement étanches, il est impossible pour un process de confondre ou de modifier la pile d'un autre.
+
+        2-Les Régistres: Un seul jeu physique pour tout le monde
+         Les régistres (rax, rbx, rsp, etc.) sont des circuits électroniques gravés directement à l'intérieur du processeur. Ils sont extrêmement rapides, mais ils sont uniques. IL n'y a pas un jeu de régistres par programme.
+         Le processeur ne peut donc gérer qu'un seul contexte à la fois
+
+         §§ Comment le processeur évite de les confondre ?
+         Il ne le fait pas parce qu'il applique la règle du partage dans le temps via le changement de contexte (que nous avons vu juste avant). le processeur ne sait pas ce qu'est un processus, il ne fait qu'executer les instructions. C'est l'OS qui fait le travail de passe-passe:
+           a- Le processeur travaille pour le process A: les régistres contiennent les donnés du processA
+           b- L'heure tourne(fin du quantum) : L'OS intervient. Il prend une "photo" des régistres et va copier toutes les valeurs dans la RAM, dans une zone sécurisée réservée au process A(le PCB)
+           c- Le processeur travaille pour le process B: Le processeur continue sa course. les données du processus A ne sont pas perdues, elles "dorment" sagement dans la RAM attendant leur tour
