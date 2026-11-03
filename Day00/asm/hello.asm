@@ -9,7 +9,7 @@ _start:
     ;; System call for sys_write(write in stdout)
     mov rax, 1                   ;move code number of sys_write into rax register
     mov rdi, stdout              ;move file descriptor of stdout into rdi register
-    mov rsi, msg                 ;move message adress into rsi register
+    lea rsi, [rel msg]           ;move message adress into rsi register with lea instruction
     mov rdx, len                 ;move message lenght into rdx register
     syscall
 
