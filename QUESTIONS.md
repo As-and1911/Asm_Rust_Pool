@@ -14,3 +14,4 @@ Quand elle est traitée, on la déplace dans la note du jour et on la coche ici.
 - [x] Comment l'OS protège-t-il la machine ? → [day00](Notes/day00.md)
 - [x] Comment le CPU est-il partagé entre les programmes ? → [day00](Notes/day00.md)
 - [x] Pile et registres : un jeu par processus ? → [day00](Notes/day00.md)
+- [x] Que calcule equ $ - msg et quand cette valeur est-elle déterminée ? [day00](Notes/day00.md)

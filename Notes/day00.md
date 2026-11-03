@@ -235,3 +235,41 @@ Il ne le fait pas parce qu'il applique la règle du partage dans le temps via le
 a- Le processeur travaille pour le process A: les régistres contiennent les donnés du processA
 b- L'heure tourne(fin du quantum) : L'OS intervient. Il prend une "photo" des régistres et va copier toutes les valeurs dans la RAM, dans une zone sécurisée réservée au process A(le PCB)
 c- Le processeur travaille pour le process B: Le processeur continue sa course. les données du processus A ne sont pas perdues, elles "dorment" sagement dans la RAM attendant leur tour
+
+
+*** Que calcule equ $ - msg et quand cette valeur est elle déterminée ?? ***
+
+    Elle sert à calculer automatiquement la longueur en octets de la chaîne de caractères msg
+
+Le symbole $ (jeton de position actuelle): représente l'adresse mémoire actuelle (le pointeur d'emplacement) à la ligne où il est écrit. Càd l'adresse mémoire juste après la fin de la chaînes de caractères
+
+msg est l'étiquette (le label) qui pointe sur l'adresse mémoire du tout premier caractère de la chaîne
+
+la soustraction $ - msg permet d'obtenir le nbr exact d'octets qui séparent ces deux points. C'est donc la longueur de la chaîne.
+
+Comme ça on évite de compter manuellement les caractères
+
+
+      - La valeur de $ - msg est déterminer au moment de la compilation ou de l'assemblage et non pendant l'exécution du programme
+
+           . Le mot-clé equ (equate / assimiler) definit une constante de compilation. Il fonction un peu comme un #define en langage C.
+           . Lorsque l'on lance le compilateur assembleur (comme NASM) il lit la chaîne, calcule la différence d'adresse trouve par exemple le nombre 22 et remplace définitivement le mot len par 22 partout dans le code
+
+
+
+*** Quelle est la différence entre lea rsi, [rel msg] et mov rsi, msg ??? ***
+
+Elle réside dans la façon dont l'adresse mémoire est calculée et représentée dans le code machine final et cela est intimement lié à la sécurité des systèmes s'exploitation modernes (la protection RIP-relative).
+
+
+     . COMPARATIF DIRECT:
+           - mov rsi, msg (adresse absolue et fixe)
+           . Ce qu'il fait : Il copie l'adresse de msg directement dans le régistre rsi
+           . Comment ça marche : L'adresse est codée "en dur" dans l'instruction machine. Par exemple, si au moment de la compilation msg est placé à l'adresse fixe 0x401000, l'instruction devient : << Mets la valeur 0x401000 dans RSI>>".
+           . Le problème moderne : Les systèmes d'exploitation actuels utilisent une sécurité appelée ASLR (Adress Space Layout Randomization). À chaque fois que votre programme se lance, l'OS change aléatoirement son emplacement en mémoire RAM pour empêcher les piratages. Si votre adresse est écrite en dur avec un mov, le programme va chercher à la mauvaise adresse et va crash (segfault)
+
+
+           -lea rsi, [rel msg] (Adresse relative, compatible ASLR)
+                .Ce qu'il fait : LEA (pour Load Effective Adress) calcule l'adresse de msg et la met dans rsi
+                .Comment ça marche : Le mot clé rel indique un adressage relatif au pointeur d'instruction (rip). L'instruction machine ne contient plus une adresse fixe mais un offset (écart). Elle dit au processeur << Prends l'adresse de la ligne de code que tu es en train d'éxecuter (rip), ajoute y exactement X octets et mets le résultat dans rsi>>
+                . L'avantage moderne : C'est le mode par défaut exigé sur les systèmes 64-bits modernes pour générer du code PIE (POSITION INDEPENDENT EXECUTABLE). Même si l'OS déplace le programme n'importe où en mémoire RAM à caude de ASLR, la distance entre votre instruction lea et la variable msg reste toujours strictement la même. Le programme ne plantera jamais
