@@ -27,8 +27,8 @@ ld name.o -o binary
 
 ## Notes
 
-- [Day 00 : `_start`, `sys_exit`, protection de l'OS, multitâche, context switch](notes/day00.md)
+- [Day00 : `_start`, `sys_exit`, protection de l'OS, multitâche, context switch](notes/day00.md)
 
 ## Questions ouvertes
 
-Voir [questions.md](questions.md).
+Voir [QUESTIONS.md](questions.md).
