@@ -9,8 +9,8 @@ Quand elle est traitée, on la déplace dans la note du jour et on la coche ici.
 
 ## Traitées
 
-- [x] Pourquoi `_start` et pas `main` ? → [day00](notes/day00.md)
-- [x] Que se passe-t-il sans `sys_exit` ? → [day00](notes/day00.md)
-- [x] Comment l'OS protège-t-il la machine ? → [day00](notes/day00.md)
-- [x] Comment le CPU est-il partagé entre les programmes ? → [day00](notes/day00.md)
-- [x] Pile et registres : un jeu par processus ? → [day00](notes/day00.md)
+- [x] Pourquoi `_start` et pas `main` ? → [day00](Notes/day00.md)
+- [x] Que se passe-t-il sans `sys_exit` ? → [day00](Notes/day00.md)
+- [x] Comment l'OS protège-t-il la machine ? → [day00](Notes/day00.md)
+- [x] Comment le CPU est-il partagé entre les programmes ? → [day00](Notes/day00.md)
+- [x] Pile et registres : un jeu par processus ? → [day00](Notes/day00.md)
