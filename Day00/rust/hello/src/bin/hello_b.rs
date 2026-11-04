@@ -25,3 +25,9 @@ fn main() {
     unsafe { ... } : It's the necessary key word. Through it you say to the compiler "I know
     what i'm doing and i take the responsibility if the pointer is invalid or if the program freeze"
  */
+
+ /*
+    Number of syscalls: 66
+
+    Number of sys_write call: 1
+ */

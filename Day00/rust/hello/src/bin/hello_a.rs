@@ -22,6 +22,12 @@ fn main() {
     io::stdout().write_all(msg).unwrap(); 
     
     //.write_all method of the io::stdout::Write interface
-    
+
     other();
 }
+
+/*
+    Number of syscalls: 66
+
+    Number of sys_write call: 1
+ */

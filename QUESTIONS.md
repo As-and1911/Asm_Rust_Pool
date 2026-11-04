@@ -9,8 +9,14 @@ Quand elle est traitée, on la déplace dans la note du jour et on la coche ici.
 
 - [ ] C'est un trait ou une interface en rust ?
 
-- [ ] 
-## Traitées
+- [ ]  Si Rust n'utilise pas des pointeurs bruts qu'utilise t il à la place ?
+
+- [ ] c'est quoi contexte multithread??
+
+- [ ] c'est quoi un flush?
+- [ ]
+ 
+ ## Traitées
 
 - [x] Pourquoi `_start` et pas `main` ? → [day00](Notes/day00.md)
 - [x] Que se passe-t-il sans `sys_exit` ? → [day00](Notes/day00.md)
@@ -18,3 +24,4 @@ Quand elle est traitée, on la déplace dans la note du jour et on la coche ici.
 - [x] Comment le CPU est-il partagé entre les programmes ? → [day00](Notes/day00.md)
 - [x] Pile et registres : un jeu par processus ? → [day00](Notes/day00.md)
 - [x] Que calcule equ $ - msg et quand cette valeur est-elle déterminée ? [day00](Notes/day00.md)
+- [x] À quoi sert concrètement le mot-clé unsafe ? -> [day00](Notes/day00.md)

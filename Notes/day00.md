@@ -3,6 +3,7 @@
 ## Ce que j'ai codé
 
 Un hello world en assembleur x86-64 (NASM) : [src/day00/](../src/day00/)
+Un hello world en Rust de deux façons différents : avec l'interface std::io::Write d'un côté et avec la fonction write de la libC de l'autre : [src/day00/](../src/day00/)
 
 ## Questions
 
@@ -273,3 +274,118 @@ Elle réside dans la façon dont l'adresse mémoire est calculée et représent�
                 .Ce qu'il fait : LEA (pour Load Effective Adress) calcule l'adresse de msg et la met dans rsi
                 .Comment ça marche : Le mot clé rel indique un adressage relatif au pointeur d'instruction (rip). L'instruction machine ne contient plus une adresse fixe mais un offset (écart). Elle dit au processeur << Prends l'adresse de la ligne de code que tu es en train d'éxecuter (rip), ajoute y exactement X octets et mets le résultat dans rsi>>
                 . L'avantage moderne : C'est le mode par défaut exigé sur les systèmes 64-bits modernes pour générer du code PIE (POSITION INDEPENDENT EXECUTABLE). Même si l'OS déplace le programme n'importe où en mémoire RAM à caude de ASLR, la distance entre votre instruction lea et la variable msg reste toujours strictement la même. Le programme ne plantera jamais
+
+*** À QUOI SERT CONCRÈTEMENT LE MOT-CLÉ UNSAFE ***
+
+          Il sert à désarçonner les contrôles et vérifications strictes du compilateur Rust pour pouvoir, par exemple, importer du code d'autres langages de programmation comme le c
+
+          Il dit clairement : "Cher compilateur, je sais que tu ne peux pas vérifier ce morceau de code. Ne panique pas, je prends l'entière responsabilté de la sécurité ici."
+
+          Il permet par la même d'autoriser des actions normalement interdites:  En dehors d'un bloc unsafe , Rust interdirait formellement de manipuler des pointeurs bruts(comme le *const u8 que nous avons utilisé) car un pointeur peut pointer vers une zone mémoire invalide et faire crasher l'ordinateur
+
+
+*** COMBIEN D'APPELS SYSTÈMES FONT CHAQUE VERSION DU HELLO WORLD EN RUST ***
+
+     1- VERSION IDIOMATIQUE (Avec le trait std::io::Write)
+       -Number of syscalls: 66
+
+       -Number of sys_write call: 1
+
+       -Tableau récapitulatif de ces différents appels systèmes (strace - c)
+       % time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ------------------
+ 35.21    0.003202        3202         1           execve
+ 18.59    0.001691         130        13           mmap
+ 13.10    0.001191         297         4           openat
+  6.17    0.000561         112         5           mprotect
+  3.82    0.000347          69         5           read
+  3.42    0.000311          77         4           close
+  3.41    0.000310         155         2           lseek
+  2.39    0.000217          72         3           newfstatat
+  2.31    0.000210         105         2           prlimit64
+  1.95    0.000177          35         5           rt_sigaction
+  1.76    0.000160          53         3           brk
+  1.65    0.000150          37         4           fstat
+  1.55    0.000141         141         1           sched_getaffinity
+  1.18    0.000107          53         2           sigaltstack
+  1.02    0.000093          46         2           getrandom
+  0.53    0.000048          48         1           write
+  0.47    0.000043          43         1           gettid
+  0.41    0.000037          37         1           arch_prctl
+  0.38    0.000035          35         1           set_robust_list
+  0.38    0.000035          35         1           rseq
+  0.31    0.000028          28         1           set_tid_address
+  0.00    0.000000           0         1           poll
+  0.00    0.000000           0         1         1 access
+------ ----------- ----------- --------- --------- ------------------
+100.00    0.009094         142  
+
+          2-VERSION AVEC LA LIBC (extern "C" et unsafe)
+
+          -Number of syscalls: 66
+
+          -Number of sys_write call: 1
+
+          -Tableau récapitulatif de ces différents appels systèmes:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ------------------
+ 32.82    0.003492        3492         1           execve
+ 17.95    0.001910         146        13           mmap
+  7.85    0.000835         208         4           openat
+  6.20    0.000660         132         5           read
+  6.08    0.000647         215         3           newfstatat
+  5.29    0.000563         112         5           mprotect
+  5.21    0.000554         138         4           fstat
+  5.20    0.000553         138         4           close
+  2.24    0.000238         119         2           lseek
+  1.99    0.000212          42         5           rt_sigaction
+  1.94    0.000206          68         3           brk
+  0.93    0.000099          49         2           getrandom
+  0.91    0.000097          48         2           prlimit64
+  0.81    0.000086          43         2           sigaltstack
+  0.74    0.000079          79         1           sched_getaffinity
+  0.69    0.000073          73         1           poll
+  0.69    0.000073          73         1         1 access
+  0.68    0.000072          72         1           rseq
+  0.56    0.000060          60         1           set_tid_address
+  0.53    0.000056          56         1           set_robust_list
+  0.39    0.000042          42         1           write
+  0.32    0.000034          34         1           gettid
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ------------------
+100.00    0.010641         166        64         1 total
+
+
+*** POURQUOI PRINTLN! NE SE COMPORTE PAS COMME UN WRITE?? ***
+
+Il y a deux raisons principales à cela : la gestion automatique du saut de ligne et du flush, et la sécurité des threads grâce à un verrouillage interne (locking)
+
+1- Le verrouillage implicite (Thread safety)
+
+     .println! verrouille automatiquement stdout à chaque invocation. Pour éviter que plusieurs threads n'entremêlent leurs lignes à l'écran. Il acquiert un verrou (mutex) sur le flux de sortie standard, écrit les données, puis relâche le verrou
+
+     .write! (std::io::stdout().write()) est brut. Si vous l'utilisez directement sans verrouiller manuellement, chaque appel système d'écriture est indépendant. Dans un contexte multithread, cela  peut fragmenter le texte. De plus, acquérir et relâcher le verrou à chaque ligne dans une boucle rapide avec un println! génère une surcharge de performance (overhead) importante.
+
+2- Le saut de ligne et le "Flushing" (Tanmpon de sortie)
+     . println! ajoute un \n et force l'affichage. Par défaut, stdout e Rust est équipé d'un tampon(buffered). Les données restent en mémoire tant que le tampon n'est pas plein ou qu'un saut de ligne n'est pas rencontré. println! garantit que le texte est immédiatement poussé(flushed) vers le terminal.
+
+     .write! n'effectue aucun flush automatique. Si vous écrivez du texte avec write!, il se peut qu'il n'apparaisse pas immédiatement à l'écran tant que vous n'appelez pas explicement .flush().
+
+
+3- Voici une façon d'obtenir les perfomances du write brut proprement 
+
+
+use std::io::{self, Write};
+
+fn main() -> io::Result<()> {
+    let stdout = io::stdout();
+    let mut handle = io::BufWriter::new(stdout.lock()); // Un seul verrou et un tampon de mémoire
+
+    for i in 0..10_000 {
+        writeln!(handle, "Ligne numéro {}", i)?; // Rapide, pas de verrouillage répété
+    }
+
+    handle.flush()?; // On vide le tampon à la fin
+    Ok(())
+}
