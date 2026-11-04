@@ -5,8 +5,11 @@ Quand elle est traitée, on la déplace dans la note du jour et on la coche ici.
 
 ## À creuser
 
-- [ ] 
+- [ ]  Comment des strings censés être écrits sur 8 octets peuvent avoir un nombre de caractères plus grand?
 
+- [ ] C'est un trait ou une interface en rust ?
+
+- [ ] 
 ## Traitées
 
 - [x] Pourquoi `_start` et pas `main` ? → [day00](Notes/day00.md)
