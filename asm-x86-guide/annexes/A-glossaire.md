@@ -1,0 +1,30 @@
+# Glossaire Technique Français ↔ Anglais de l'Assembleur
+
+- **ABI (*Application Binary Interface*)** : Spécification technique des conventions d'appels entre programmes et bibliothèques (registres d'arguments, alignement de pile, registres préservés).
+- **ALU (*Arithmetic Logic Unit*)** : Unité Arithmétique et Logique du processeur chargée d'effectuer les calculs mathématiques et binaires.
+- **ASLR (*Address Space Layout Randomization*)** : Mécanisme de sécurité du système d'exploitation plaçant aléatoirement la pile, le tas et le code en mémoire vive.
+- **Binaire / Hexadécimal** : Systèmes de numération en base 2 (0 et 1) et en base 16 (0 à F).
+- **Branch Prediction (Prédiction de branche)** : Mécanisme matériel du processeur qui devine à l'avance si un saut conditionnel va être pris ou non.
+- **Callee-saved** : Registres que la fonction appelée a le devoir absolu de préserver et de restituer intacts avant de faire `ret` (`rbx, rsp, rbp, r12-r15`).
+- **Caller-saved** : Registres volatils que la fonction appelée a le droit d'écraser librement (`rax, rcx, rdx, rsi, rdi, r8-r11`).
+- **Complément à deux (*Two's Complement*)** : Représentation mathématique standard des entiers négatifs en binaire (Inversion NOT + 1).
+- **Déréférencement (*Dereferencing*)** : Accéder au contenu d'une case mémoire à partir d'une adresse (`[rax]`).
+- **Dword (*Double Word*)** : Mot de 32 bits (4 octets).
+- **ELF (*Executable and Linkable Format*)** : Format standard des fichiers exécutables et bibliothèques sous Linux.
+- **Endianness (Boutisme)** : Ordre de rangement des octets en mémoire. En **Little-Endian** (x86_64), l'octet de poids faible est placé à la plus petite adresse.
+- **Got (*Global Offset Table*)** : Table d'adresses en mémoire vive utilisée par la PLT pour résoudre les bibliothèques dynamiques.
+- **Instruction Pointer (`RIP`)** : Registre pointant vers l'adresse mémoire de la prochaine instruction à exécuter.
+- **Leaf Function (Fonction feuille)** : Fonction qui n'appelle aucune autre fonction (peut utiliser la Red Zone).
+- **Mach-O** : Format binaire propriétaire d'Apple utilisé sous macOS.
+- **Mnémonique** : Nom textuel d'une instruction assembleur (`mov`, `add`, `jmp`).
+- **Opcode (*Operation Code*)** : Octets binaires machines réels décodés par le processeur (ex: `0F 05` pour `syscall`).
+- **PIE (*Position Independent Executable*)** : Exécutable compilé avec des adresses relatives pouvant être chargé n'importe où en mémoire.
+- **PLT (*Procedure Linkage Table*)** : Table de trampolines de code exécutable permettant la liaison dynamique paresseuse (*Lazy Binding*).
+- **Prologue / Épilogue** : Instructions de début (`push rbp; mov rbp, rsp`) et de fin (`leave; ret`) d'une fonction préparant et nettoyant le cadre de pile.
+- **Qword (*Quad Word*)** : Mot de 64 bits (8 octets).
+- **Red Zone** : Zone sanctuarisée de 128 octets immédiatement sous `RSP` garantie non-écrasée par les interruptions.
+- **RFLAGS** : Registre contenant les drapeaux d'état du processeur (`ZF`, `CF`, `SF`, `OF`).
+- **SIMD (*Single Instruction, Multiple Data*)** : Traitement vectoriel parallèle de données simultanées (SSE / AVX).
+- **Stack Frame (Cadre de pile)** : Zone de la pile dédiée à une instance d'appel de fonction, bornée par `RBP` et `RSP`.
+- **Syscall (*System Call*)** : Appel système demandant un service privilégié au noyau de l'OS via l'instruction `syscall`.
+- **Word** : Mot historique de 16 bits (2 octets) en architecture x86.

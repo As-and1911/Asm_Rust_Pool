@@ -1,0 +1,33 @@
+# =============================================================================
+#  docker-compose.yml — Lancement simplifié de l'environnement asm x86_64
+# =============================================================================
+#
+#  Utilisation :
+#    docker compose -f docker/docker-compose.yml up -d    # Démarrer
+#    docker compose -f docker/docker-compose.yml exec asm bash  # Se connecter
+#    docker compose -f docker/docker-compose.yml down      # Arrêter
+#
+#  Ou depuis le répertoire docker/ :
+#    docker compose up -d
+#    docker compose exec asm bash
+#    docker compose down
+#
+# =============================================================================
+
+services:
+  asm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: asm-x86
+    stdin_open: true       # Équivalent de -i (mode interactif)
+    tty: true              # Équivalent de -t (pseudo-terminal)
+    volumes:
+      - ..:/workspace      # Monte la racine du projet dans /workspace
+    working_dir: /workspace
+    # Nécessaire pour ptrace (GDB, strace) — même si limité sous émulation
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
